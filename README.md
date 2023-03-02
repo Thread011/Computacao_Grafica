@@ -2,7 +2,6 @@
 
 ## Tutorial 1 - Grafic application based on WEGL
 
-
 Shaders are functions that let us control elements drawn. There are two types:
 
 - **vertex shaders** : vertex distances computation, primitive rasterization.
@@ -20,6 +19,12 @@ Forms to receive data:
 - **Textures** : data arrays, based on image data.
 
 - **Varyings** : intermediary variable between *fragment* and *vertex* shader. The values set on a varying by a vertex shader will be interpolated while executing the fragment shader.
+
+### Supplying data to the shaders (SendDataToShaders function):
+After we've created our program on our GPU, we have to supply data to it. 
+vertexPosition and vertexColor are the only inputs to our program. (attributes)
+
+
 
 ---
 

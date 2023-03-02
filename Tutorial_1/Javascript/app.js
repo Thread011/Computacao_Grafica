@@ -7,8 +7,9 @@
 var canvas = document.createElement('canvas');
 
 //Dimension of the canvas element.
-canvas.height = window.innerHeight - 100;
 canvas.width = window.innerWidth - 15;
+canvas.height = window.innerHeight - 100;
+
 
 //Create a WebGLRenderingContext.
 var GL = canvas.getContext('webgl');
@@ -36,18 +37,6 @@ function PrepareCanvas(){
 
 
 //Creates shaders, by adding its source, compiling it, and check if compilation is successful
-// function createShader(gl, type, source) {
-//     var shader = gl.createShader(type);
-//     gl.shaderSource(shader, source);
-//     gl.compileShader(shader);
-//     var success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
-//     if (success) {
-//       return shader;
-//     }
-   
-//     console.log(gl.getShaderInfoLog(shader));
-//     gl.deleteShader(shader);
-//   }
 function PrepareShaders(){
     GL.shaderSource(vertexShader, codigoVertexShader);
     GL.shaderSource(fragmentShader, codigoFragmentShader);
@@ -70,19 +59,6 @@ function PrepareShaders(){
 }
 
 //Creates the program, composed by vertex & fragment shaders.
-// function createProgram(gl, vertexShader, fragmentShader) {
-//     var program = gl.createProgram();
-//     gl.attachShader(program, vertexShader);
-//     gl.attachShader(program, fragmentShader);
-//     gl.linkProgram(program);
-//     var success = gl.getProgramParameter(program, gl.LINK_STATUS);
-//     if (success) {
-//       return program;
-//     }
-   
-//     console.log(gl.getProgramInfoLog(program));
-//     gl.deleteProgram(program);
-//   }
 
 function PrepareProgram(){
     GL.attachShader(program, vertexShader);
@@ -102,7 +78,7 @@ function PrepareProgram(){
     GL.useProgram(program);
 }
 
-//Float array representing 
+//Float array representing the points to be drawn (x,y,z) + colors R, G, B
 function PrepareTriangleData(){
     var triangleArray = [
         -0.5,   -0.5,   0.0,    1.0,    0.0,    0.0,
@@ -128,8 +104,17 @@ function SendDataToShaders(){
         3,
         GL.FLOAT,
         false,
-        0*Float32Array.BYTES_PER_ELEMENT,
+        6*Float32Array.BYTES_PER_ELEMENT,
         0*Float32Array.BYTES_PER_ELEMENT
+    );
+
+    GL.vertexAttribPointer(
+        vertexColorAttributeLocation,
+        3,
+        GL.FLOAT,
+        false,
+        6*Float32Array.BYTES_PER_ELEMENT,
+        3*Float32Array.BYTES_PER_ELEMENT
     );
 
     GL.enableVertexAttribArray(vertexPositionAttributeLocation);
