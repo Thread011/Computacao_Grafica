@@ -4,6 +4,8 @@ var cena = new THREE.Scene();
 var camara = new THREE.OrthographicCamera(-1, 1, 1, -1, -10, 10);
 var renderer = new THREE.WebGLRenderer();
 
+var camaraPerspetiva = new THREE.PerspectiveCamera(45, 4/3, 0.1, 100);
+
 renderer.setSize(window.innerWidth -15, window.innerHeight - 80);
 
 renderer.setClearColor(0xaaaaaa);
@@ -31,20 +33,20 @@ var material = new THREE.MeshBasicMaterial({vertexColors: true, side: THREE.Doub
 
 var mesh = new THREE.Mesh(geometria, material);
 
-mesh.translateX(0.5);
-mesh.translateY(0.5);
-mesh.translateX(-1);
-mesh.translateY(-0.9);
+//mesh.translateX(0.5);
+//mesh.translateY(0.5);
 
 
-mesh.scale.set(0.25, 0.25, 0.25);
-mesh.scale.multiplyScalar(3);
+//mesh.scale.set(0.25, 0.25, 0.25);
+//mesh.scale.multiplyScalar(1.75);
+mesh.translateZ(-6.0);
+
+var anguloRotacao = 0;
 
 function loop(){
-    mesh.rotateZ(Math.PI/180 * 1);
     mesh.rotateY(Math.PI/180 * 1);
 
-    renderer.render(cena, camara);
+    renderer.render(cena, camaraPerspetiva);
 
     requestAnimationFrame(loop);
 }
@@ -52,7 +54,7 @@ function loop(){
 function Start(){
     cena.add(mesh);
 
-    renderer.render(cena, camara);
+    renderer.render(cena, camaraPerspetiva);
 
     requestAnimationFrame(loop);
 }

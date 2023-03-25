@@ -18,12 +18,13 @@ var program = GL.createProgram();
 
 var gpuArrayBuffer = GL.createBuffer();
 
-// Variavel que quarda a localização da variavel 'transoformationMatrix' do
-// vertexShader.
 var finalMatrixLocation;
 
-// Variavel que guarda a rotação que deve ser aplicada ao objeto.
 var anguloDeRotacao = 0;
+
+var visualizationMatrixLocation;
+var projectionMatrixLocation;
+var viewportMatrixLocation;
 
 function PrepareCanvas(){
     GL.clearColor(0.65, 0.65, 0.65, 1.0);
@@ -55,6 +56,8 @@ function PrepareShaders(){
         console.error("ERRO :: A compilação do fragment shader lançou uma excepção.",
             GL.getShaderInfoLog(fragmentShader));
     }
+
+
 
 }
 
@@ -120,9 +123,11 @@ function SendDataToShaders(){
     GL.enableVertexAttribArray(vertexPositionAttributeLocation);
     GL.enableVertexAttribArray(vertexColorAttributeLocation);
 
-    //guarda a localização da variavel 'transformationMatrix" do vertexShader.
-
     finalMatrixLocation = GL.getUniformLocation(program, 'transformationMatrix');
+
+    visualizationMatrixLocation = GL.getUniformLocation(program, 'visualizationMatrix');
+    projectionMatrixLocation = GL.getUniformLocation(program, 'projectionMatrix');
+    viewportMatrixLocation = GL.getUniformLocation(program, 'viewportMatrix');
 
 }
 
@@ -144,26 +149,41 @@ function loop(){
     ];
 
 
-    //DESAFIOS:
-        // Escala: 75% do tamanho original;
-    finalMatrix = math.multiply(CriarMatrizEscala(0.25, 0.25, 0.25), finalMatrix);
-    finalMatrix = math.multiply(CriarMatrizEscala(3, 3, 3), finalMatrix);
-
-
-        // Rotação: dois eixos;
     finalMatrix = math.multiply(CriarMatrizRotacaoY(anguloDeRotacao), finalMatrix);
-    finalMatrix = math.multiply(CriarMatrizRotacaoZ(anguloDeRotacao), finalMatrix);
 
-        // Translação: canto inferior esquerdo (coord. (x, y) = (-1, -0.9))
-    finalMatrix = math.multiply(CriarMatrizTranslacao(0.5, 0.5, 0), finalMatrix);
-    finalMatrix = math.multiply(CriarMatrizTranslacao(-1, -0.9, 0), finalMatrix);
+    finalMatrix = math.multiply(CriarMatrizTranslacao(0, 0, 1), finalMatrix);
+
 
     var newarray = [];
     for(i = 0; i < finalMatrix.length; i++){
         newarray = newarray.concat(finalMatrix[i]);
     }
 
+    var visualizationMatrix = MatrizDeVizualizacao([1, 0, 0], [0, 1, 0], [0, 0, 1], [0, 0, 0]);
+    var newVisualizationMatrix = [];
+    for(i = 0; i < visualizationMatrix.length; i++){
+        newVisualizationMatrix = newVisualizationMatrix.concat(visualizationMatrix[i]);
+    }
+
+    var projectionMatrix = MatrizPerspetiva(1, 4, 3, 0.1, 100);
+
+
+    var newprojectionMatrix = [];
+    for(i = 0; i < projectionMatrix.length; i++){
+        newprojectionMatrix = newprojectionMatrix.concat(projectionMatrix[i]);
+    }
+
+    var viewportMatrix = MatrizViewPort(-1, 1, -1, 1);
+    var newViewportMatrix = [];
+    for(i = 0; i < viewportMatrix.length; i++){
+        newViewportMatrix = newViewportMatrix.concat(viewportMatrix[i]);
+    }
+
     GL.uniformMatrix4fv(finalMatrixLocation, false, newarray);
+
+    GL.uniformMatrix4fv(visualizationMatrixLocation, false, newVisualizationMatrix);
+    GL.uniformMatrix4fv(projectionMatrixLocation, false, newprojectionMatrix);
+    GL.uniformMatrix4fv(viewportMatrixLocation, false, newViewportMatrix);
 
     GL.drawArrays(
         GL.TRIANGLES,
